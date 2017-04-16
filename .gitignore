@@ -2,3 +2,4 @@
 vendor/
 composer.phar
 snippets.sql
+.php_cs.cache

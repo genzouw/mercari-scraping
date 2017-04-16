@@ -1,0 +1,27 @@
+{
+    "name": "genzouw/mercari-scraping",
+    "require": {
+        "devster/ubench": "*",
+        "ginq/ginq": "*",
+        "monolog/monolog": "*",
+        "nesbot/carbon": "*",
+        "pimple/pimple": "*",
+        "electrolinux/phpquery": "^0.9.6"
+    },
+    "require-dev": {
+        "piece/stagehand-testrunner": "*",
+        "phpunit/phpunit": "*"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "genzouw",
+            "email": "genzouw@gmail.com"
+        }
+    ]
+}
