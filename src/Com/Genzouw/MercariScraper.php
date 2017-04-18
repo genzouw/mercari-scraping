@@ -2,6 +2,8 @@
 
 namespace Com\Genzouw;
 
+use Com\Genzouw\Mercari\SearchCondition;
+
 /**
  * @author   genzouw <genzouw@gmail.com>
  * @license  http://www.opensource.org/licenses/mit-license.html  MIT License
@@ -15,10 +17,19 @@ class MercariScraper
     {
     }
 
-    public function parse()
+    public function findItems()
     {
+        $searchCondition = new SearchCondition();
+
+        $searchCondition->setKeyword('割引券');
+        $searchCondition->setMaxPage(1);
+        $searchCondition->setOnSale(true);
+
+        $urls = $searchCondition->generateSearchResultPageUrls();
+
+        $url = $urls[0];
         $dom = \phpQuery::newDocument(file_get_contents(
-            'http://www.mercari.com/jp/search/?keyword=%E3%82%AF%E3%83%BC%E3%83%9D%E3%83%B3'
+            $url
         ));
 
         // pq($dom)->find('section.items-box')->find('img')->each(function ($it) {
@@ -54,6 +65,12 @@ class MercariScraper
                     });
 
                 echo '    ', implode($categories, ' > '), PHP_EOL;
+
+                $disabled = $detailTable
+                    ->find('div.item-buy-btn')
+                    ->hasClass('disabled');
+
+                echo '    ', ($disabled ? "売り切れ" : "販売中"), PHP_EOL;
                 // item-buy-btn disabled f18-24
 
                 echo '========================================', PHP_EOL;
@@ -66,6 +83,10 @@ class MercariScraper
                 // echo '', PHP_EOL;
                 // echo trim(pq($it)->find('div.summary')->text()), PHP_EOL;
             });
+
+        echo '<pre>';
+        var_dump($url);
+        echo '</pre>';
 
         return true;
     }
