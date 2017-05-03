@@ -30,6 +30,8 @@ class Item
     public function setName(string $name)
     {
         $this->name = $name;
+
+        return $this;
     }
 
     public function getName(): string
@@ -40,6 +42,8 @@ class Item
     public function setImageUrl(string $imageUrl)
     {
         $this->imageUrl = $imageUrl;
+
+        return $this;
     }
 
     public function getImageUrl(): string
@@ -50,6 +54,8 @@ class Item
     public function setPrice(int $price)
     {
         $this->price = $price;
+
+        return $this;
     }
 
     public function getPrice(): int
@@ -60,6 +66,8 @@ class Item
     public function setCategories(string $categories)
     {
         $this->categories = $categories;
+
+        return $this;
     }
 
     public function getCategories(): string
@@ -70,6 +78,8 @@ class Item
     public function setOnSale(bool $onSale)
     {
         $this->onSale = $onSale;
+
+        return $this;
     }
 
     public function getOnSale(): bool
@@ -80,6 +90,8 @@ class Item
     public function setDetailPageUrl(string $detailPageUrl)
     {
         $this->detailPageUrl = $detailPageUrl;
+
+        return $this;
     }
 
     public function getDetailPageUrl(): string

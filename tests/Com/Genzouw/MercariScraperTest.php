@@ -22,7 +22,7 @@ class MercariScraperTest extends \PHPUnit_Framework_TestCase  {
     public function test_findItems() {
         $target = new MercariScraper();
 
-        $expected = true;
+        $expected = array();
 
         // ----- Validating -----
         $this->assertEquals(

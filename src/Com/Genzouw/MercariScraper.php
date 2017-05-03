@@ -3,6 +3,8 @@
 namespace Com\Genzouw;
 
 use Com\Genzouw\Mercari\SearchCondition;
+use Com\Genzouw\Mercari\Item;
+use \phpQuery;
 
 /**
  * @author   genzouw <genzouw@gmail.com>
@@ -10,6 +12,8 @@ use Com\Genzouw\Mercari\SearchCondition;
  */
 class MercariScraper
 {
+    public $items = array();
+
     /**
      * コンストラクタ
      */
@@ -17,18 +21,20 @@ class MercariScraper
     {
     }
 
-    public function findItems()
+    public function findItems(SearchCondition $searchCondition = null): array
     {
-        $searchCondition = new SearchCondition();
-
-        $searchCondition->setKeyword('割引券');
-        $searchCondition->setMaxPage(1);
-        $searchCondition->setOnSale(true);
+        if (is_null($searchCondition)) {
+            $searchCondition = new SearchCondition();
+        }
+        // $searchCondition = new SearchCondition();
+        // $searchCondition->setKeyword('割引券');
+        // $searchCondition->setMaxPage(1);
+        // $searchCondition->setOnSale(true);
 
         $urls = $searchCondition->generateSearchResultPageUrls();
 
         $url = $urls[0];
-        $dom = \phpQuery::newDocument(file_get_contents(
+        $dom = phpQuery::newDocument(file_get_contents(
             $url
         ));
 
@@ -45,12 +51,8 @@ class MercariScraper
                 $selector = pq($it);
 
                 $detailPageUrl = $selector->find('a')->attr('href');
-                echo "{$selector->find('h3')->text()}", PHP_EOL;
-                echo "    {$detailPageUrl}", PHP_EOL;
-                echo "    {$selector->find('.items-box-price')->text()}", PHP_EOL;
-                echo "    {$selector->find('img')->attr('data-src')}", PHP_EOL;
 
-                $detailPage = \phpQuery::newDocument(file_get_contents(
+                $detailPage = phpQuery::newDocument(file_get_contents(
                     $detailPageUrl
                 ));
 
@@ -64,30 +66,22 @@ class MercariScraper
                         $categories[] = pq($it)->text();
                     });
 
-                echo '    ', implode($categories, ' > '), PHP_EOL;
-
                 $disabled = $detailTable
                     ->find('div.item-buy-btn')
                     ->hasClass('disabled');
 
-                echo '    ', ($disabled ? "売り切れ" : "販売中"), PHP_EOL;
-                // item-buy-btn disabled f18-24
+                $item = new Item();
+                $item
+                    ->setName($selector->find('h3')->text())
+                    ->setImageUrl($selector->find('img')->attr('data-src'))
+                    ->setPrice(intval(preg_replace('/[^0-9]/su', '', $selector->find('.items-box-price')->text())))
+                    ->setCategories(implode($categories, ' > '))
+                    ->setOnSale($disabled ? "売り切れ" : "販売中")
+                    ->setDetailPageUrl($detailPageUrl);
 
-                echo '========================================', PHP_EOL;
-                // echo '', $it->name(), PHP_EOL;
-                // echo '', $it->attr('src'), PHP_EOL;
-                // echo '', pq($it)->attr('data-src'), PHP_EOL;
-                // echo '', pq($it)->data('src'), PHP_EOL;
-                // echo '', pq($it)->html(), PHP_EOL;
-                // echo '$ ', trim(pq($it)->find('div.command')->text()), PHP_EOL;
-                // echo '', PHP_EOL;
-                // echo trim(pq($it)->find('div.summary')->text()), PHP_EOL;
+                $this->items[] = $item;
             });
 
-        echo '<pre>';
-        var_dump($url);
-        echo '</pre>';
-
-        return true;
+        return $this->items;
     }
 }
