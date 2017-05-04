@@ -2,9 +2,9 @@
 
 namespace Com\Genzouw;
 
-use Com\Genzouw\Mercari\SearchCondition;
 use Com\Genzouw\Mercari\Item;
-use \phpQuery;
+use Com\Genzouw\Mercari\SearchCondition;
+use phpQuery;
 
 /**
  * @author   genzouw <genzouw@gmail.com>
@@ -33,54 +33,48 @@ class MercariScraper
 
         $urls = $searchCondition->generateSearchResultPageUrls();
 
-        $url = $urls[0];
-        $dom = phpQuery::newDocument(file_get_contents(
-            $url
-        ));
+        foreach ($urls as $url) {
+            $dom = phpQuery::newDocument(file_get_contents(
+                $url
+            ));
 
-        // pq($dom)->find('section.items-box')->find('img')->each(function ($it) {
-        // pq($dom)->find('section.items-box > a > figure > img')->each(function ($it) {
-        pq($dom)->find('section.items-box')
-            ->each(function ($it) {
-                // echo '----------------------------------------', PHP_EOL;
-                // echo '', pq($it)->html(), PHP_EOL;
-            })
-            // ->find('img')
-            // ->eq(1)
-            ->each(function ($it) {
-                $selector = pq($it);
+            pq($dom)
+                ->find('section.items-box')
+                ->each(function ($it) {
+                    $selector = pq($it);
 
-                $detailPageUrl = $selector->find('a')->attr('href');
+                    $detailPageUrl = $selector->find('a')->attr('href');
 
-                $detailPage = phpQuery::newDocument(file_get_contents(
-                    $detailPageUrl
-                ));
+                    $detailPage = phpQuery::newDocument(file_get_contents(
+                        $detailPageUrl
+                    ));
 
-                $detailTable = pq($detailPage)
-                    ->find('section.item-box-container > div.item-main-content.clearfix > table');
+                    $detailTable = pq($detailPage)
+                        ->find('section.item-box-container > div.item-main-content.clearfix > table');
 
-                $categories = [];
-                $detailTable
-                    ->find('tr:nth-child(2) > td div')
-                    ->each(function ($it) use (&$categories) {
-                        $categories[] = pq($it)->text();
-                    });
+                    $categories = [];
+                    $detailTable
+                        ->find('tr:nth-child(2) > td div')
+                        ->each(function ($it) use (&$categories) {
+                            $categories[] = pq($it)->text();
+                        });
 
-                $disabled = $detailTable
-                    ->find('div.item-buy-btn')
-                    ->hasClass('disabled');
+                    $disabled = $detailTable
+                        ->find('div.item-buy-btn')
+                        ->hasClass('disabled');
 
-                $item = new Item();
-                $item
-                    ->setName($selector->find('h3')->text())
-                    ->setImageUrl($selector->find('img')->attr('data-src'))
-                    ->setPrice(intval(preg_replace('/[^0-9]/su', '', $selector->find('.items-box-price')->text())))
-                    ->setCategories(implode($categories, ' > '))
-                    ->setOnSale($disabled ? "売り切れ" : "販売中")
-                    ->setDetailPageUrl($detailPageUrl);
+                    $item = new Item();
+                    $item
+                        ->setName($selector->find('h3')->text())
+                        ->setImageUrl($selector->find('img')->attr('data-src'))
+                        ->setPrice(intval(preg_replace('/[^0-9]/su', '', $selector->find('.items-box-price')->text())))
+                        ->setCategories(implode($categories, ' > '))
+                        ->setOnSale($disabled ? '売り切れ' : '販売中')
+                        ->setDetailPageUrl($detailPageUrl);
 
-                $this->items[] = $item;
-            });
+                    $this->items[] = $item;
+                });
+        }
 
         return $this->items;
     }

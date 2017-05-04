@@ -11,6 +11,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use Com\Genzouw\MercariScraper;
 use Com\Genzouw\Mercari\SearchCondition;
+use Com\Genzouw\Mercari\Item;
 
 $scraper = new MercariScraper();
 
@@ -18,7 +19,7 @@ $keyword = $argv[1];
 
 $condition = new SearchCondition();
 $condition->setKeyword($keyword);
-$condition->setMaxPage(5);
+$condition->setMaxPage(10);
 $condition->setOnSale(true);
 
 $items = $scraper->findItems($condition);
