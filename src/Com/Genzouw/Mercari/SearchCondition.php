@@ -14,11 +14,23 @@ class SearchCondition
 
     private $onSale = null;
 
+    private $priceMax = 0;
+
     /**
      * コンストラクタ
      */
     public function __construct()
     {
+    }
+
+    public function setPriceMax($priceMax)
+    {
+        $this->priceMax = $priceMax;
+    }
+
+    public function getPriceMax()
+    {
+        return $this->priceMax;
     }
 
     public function setOnSale(bool $onSale)
@@ -66,6 +78,10 @@ class SearchCondition
 
             if (!empty($this->keyword)) {
                 $queryStrings[] = 'keyword=' . rawurlencode($this->keyword);
+            }
+
+            if (!empty($this->priceMax) && $this->priceMax > 0) {
+                $queryStrings[] = 'price_max=' . "{$this->priceMax}";
             }
 
             $urls[] = 'http://www.mercari.com/jp/search/?' . implode($queryStrings, '&');
