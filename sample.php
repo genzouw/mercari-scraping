@@ -14,8 +14,10 @@ use Com\Genzouw\Mercari\SearchCondition;
 
 $scraper = new MercariScraper();
 
+$keyword = $argv[1];
+
 $condition = new SearchCondition();
-$condition->setKeyword('割引券');
+$condition->setKeyword($keyword);
 $condition->setMaxPage(5);
 $condition->setOnSale(true);
 
