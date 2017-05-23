@@ -24,6 +24,10 @@ $condition->setOnSale(true);
 
 $items = $scraper->findItems($condition);
 
+$items = array_filter($items, function ( Item $it ) use ($keyword) {
+    return strpos($it->getName(), $keyword) === false;
+});
+
 uasort($items, function ($x, $y) {
     return $x->getPrice() - $y->getPrice();
 })
