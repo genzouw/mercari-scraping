@@ -33,9 +33,19 @@ class MercariScraper
 
         $urls = $searchCondition->generateSearchResultPageUrls();
 
+                $options = array(
+                    'http' => array(
+                        'method' => 'GET',
+                        'header' => 'User-Agent: Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_5 like Mac OS X; ja-jp) AppleWebKit/533.17.9 (KHTML, like Gecko) Mobile/8L1',
+                    ),
+                );
+        $context = stream_context_create($options);
+
         foreach ($urls as $url) {
             $dom = phpQuery::newDocument(file_get_contents(
-                $url
+                $url,
+                false,
+                $context
             ));
 
             pq($dom)

@@ -19,18 +19,15 @@ $keyword = $argv[1];
 
 $condition = new SearchCondition();
 $condition->setKeyword($keyword);
-$condition->setMaxPage(10);
+$condition->setMaxPage(5);
 $condition->setOnSale(true);
+$condition->setPriceMax(500);
 
 $items = $scraper->findItems($condition);
 
-$items = array_filter($items, function ( Item $it ) use ($keyword) {
-    return strpos($it->getName(), $keyword) === false;
-});
-
-uasort($items, function ($x, $y) {
-    return $x->getPrice() - $y->getPrice();
-})
+// uasort($items, function ($x, $y) {
+    // return $x->getPrice() - $y->getPrice();
+// })
 
 ?>
 <!DOCTYPE html>

@@ -84,7 +84,7 @@ class SearchCondition
                 $queryStrings[] = 'price_max=' . "{$this->priceMax}";
             }
 
-            $urls[] = 'http://www.mercari.com/jp/search/?' . implode($queryStrings, '&');
+            $urls[] = 'https://www.mercari.com/jp/search/?' . implode($queryStrings, '&');
         }
 
         return $urls;
